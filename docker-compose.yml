@@ -49,10 +49,21 @@ services:
       --authrpc.vhosts="*"
       --authrpc.jwtsecret=/blast/jwt.txt
       --syncmode=full
-      --gcmode=archive
+      --gcmode=full
       --nodiscover
       --maxpeers=0
       --rollup.disabletxpoolgossip=true
+      --rpc.gascap=0
+      --rpc.txfeecap=0
+      --rpc.evmtimeout=0
+      --cache=8192
+      --cache.preimages
+      --cache.database=50
+      --cache.trie=30
+      --txpool.globalslots=10000
+      --txpool.globalqueue=5000
+      --override.canyon=0
+      --override.ecotone=1716843599
     networks:
       - blast-net
     env_file: 
@@ -72,6 +83,7 @@ services:
       op-node
       --l1="$L1_RPC_URL"
       --l1.rpckind="$L1_RPC_KIND"
+      --l1.beacon="$L1_BEACON_API_URL"
       --l2="http://blast-geth:8551"
       --l2.jwt-secret=/blast/jwt.txt
       --rollup.config="/blast/${NETWORK}/rollup.json"
