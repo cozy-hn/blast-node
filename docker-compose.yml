@@ -62,8 +62,7 @@ services:
       --cache.trie=30
       --txpool.globalslots=10000
       --txpool.globalqueue=5000
-      --override.canyon=0
-      --override.ecotone=1716843599
+      --rollup.sequencerhttp=https://sequencer.blast.io
     networks:
       - blast-net
     env_file: 
@@ -78,15 +77,22 @@ services:
     volumes:
       - $PWD:/blast
     ports:
-      - "9003:9003"
-    command: >
-      op-node
-      --l1="$L1_RPC_URL"
-      --l1.rpckind="$L1_RPC_KIND"
-      --l1.beacon="$L1_BEACON_API_URL"
-      --l2="http://blast-geth:8551"
-      --l2.jwt-secret=/blast/jwt.txt
-      --rollup.config="/blast/${NETWORK}/rollup.json"
+      - "9003:9003/tcp"
+      - "9003:9003/udp"
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        op-node \
+        --l1="$$L1_RPC_URL" \
+        --l1.rpckind="$$L1_RPC_KIND" \
+        --l1.beacon="$$L1_BEACON_API_URL" \
+        --l2="http://blast-geth:8551" \
+        --l2.jwt-secret=/blast/jwt.txt \
+        --rollup.config="/blast/$$NETWORK/rollup.json" \
+        --p2p.bootnodes="$$OP_NODE_P2P_BOOTNODES" \
+        --p2p.listen.ip=0.0.0.0 \
+        --p2p.listen.tcp=9003 \
+        --p2p.listen.udp=9003
     depends_on:
       - blast-geth
     networks:
